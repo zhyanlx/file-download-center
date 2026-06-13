@@ -50,8 +50,8 @@ end
 
 local uri = ngx.var.request_uri
 local path = uri:match("^([^%?]*)")
+path = ngx.unescape_uri(path)
 if path == "/favicon.ico" then return ngx.exit(404) end
-if path:sub(-1) ~= "/" then path = path .. "/" end
 path = sanitize_path(path)
 local fp = BASE_DIR .. path
 
@@ -281,8 +281,8 @@ end
 f:close()
 local testdir = io.open(fp .. "/", "r")
 if testdir then testdir:close() else
-    ngx.req.set_uri("/__static__")
-    ngx.exec("@static")
+    ngx.req.set_uri("/__static__" .. path)
+    ngx.exec("/__static__" .. path)
     return
 end
 
